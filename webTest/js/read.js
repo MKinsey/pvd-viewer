@@ -43,6 +43,7 @@ $(document).ready(function(){
 
   animate()
 })
+
 function animate() {
   requestAnimationFrame( animate );
   controls.update();
