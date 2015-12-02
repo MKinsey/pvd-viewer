@@ -1,6 +1,6 @@
 $(document).ready(function(){
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.01, 1e10 );
-  camera.position.z = 0.2;
+  camera.position.z = 5;
 
   controls = new THREE.TrackballControls( camera );
 
@@ -40,12 +40,15 @@ $(document).ready(function(){
   $("#container").append(container)
   container.appendChild( renderer.domElement );
   // add to scene
-  var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-  var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-  var cube = new THREE.Mesh( geometry, material );
-  scene.add( cube );
 
+  animate()
 })
+function animate() {
+  requestAnimationFrame( animate );
+  controls.update();
+  renderer.render( scene, camera );
+  //stats.update();
+}
 function loadDoc(url) {
   var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
