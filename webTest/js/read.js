@@ -2,17 +2,17 @@ $(document).ready(function(){
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.01, 1e10 );
   camera.position.z = 0.2;
 
-  // controls = new THREE.TrackballControls( camera );
-  //
-  // controls.rotateSpeed = 5.0;
-  // controls.zoomSpeed = 5;
-  // controls.panSpeed = 2;
-  //
-  // controls.noZoom = false;
-  // controls.noPan = false;
-  //
-  // controls.staticMoving = true;
-  // controls.dynamicDampingFactor = 0.3;
+  controls = new THREE.TrackballControls( camera );
+
+  controls.rotateSpeed = 5.0;
+  controls.zoomSpeed = 5;
+  controls.panSpeed = 2;
+
+  controls.noZoom = false;
+  controls.noPan = false;
+
+  controls.staticMoving = true;
+  controls.dynamicDampingFactor = 0.3;
 
   scene = new THREE.Scene();
 
@@ -39,6 +39,11 @@ $(document).ready(function(){
   // document.body.appendChild( container );
   $("#container").append(container)
   container.appendChild( renderer.domElement );
+  // add to scene
+  var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+  var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+  var cube = new THREE.Mesh( geometry, material );
+  scene.add( cube );
 
 })
 function loadDoc(url) {
@@ -76,7 +81,7 @@ function build(pointsXml, offsets, numberOfComponents){
       x = points[i]
       y = points[i+1]
       z = points[i+2]
-      
+
     }
   }
 
