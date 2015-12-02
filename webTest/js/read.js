@@ -23,7 +23,6 @@ $(document).ready(function(){
   //load data
   loadDoc("Bed000000.vtu")
 
-  alert('Loaded')
   // light
   var dirLight = new THREE.DirectionalLight( 0xffffff );
   dirLight.position.set( 200, 200, 1000 ).normalize();
@@ -42,8 +41,8 @@ $(document).ready(function(){
   $("#container").append(container)
   container.appendChild( renderer.domElement );
   // add to scene
-  
-  
+
+
   var material = new THREE.MeshLambertMaterial( { color:0xffffff, side: THREE.DoubleSide } );
   var mesh = new THREE.Mesh( geometry, material );
   mesh.position.setY( - 0.09 );
@@ -74,42 +73,46 @@ function parse(x){
   xmlDoc = $.parseXML( x )
   xml = $( xmlDoc )
   // get specific data
-  points = xml.find('Points')
-  numberOfComponents = points.find('DataArray').attr('NumberOfComponents')
+  pts = xml.find('Points')
+  numberOfComponents = pts.find('DataArray').attr('NumberOfComponents')
   cells = xml.find('Cells')
   numberOfCells = xml.find('Piece').attr('NumberOfCells')
   connectivity = xml.find('[Name="connectivity"]')
   offsets = xml.find('[Name="offsets"]')
   types = xml.find('[Name="types"]')
   pData = xml.find('PointData')
-  alert('Building')
-  build(points, offsets, numberOfComponents, connectivity, numberOfCells)
-  alert('Builded')
+  console.log('Building')
+  build(pts.text(), offsets, numberOfComponents, connectivity.text(), numberOfCells)
+  console.log('Done Building')
 }
 
-function build(pointsXml, offsets, numberOfComponents, connect, nOfCells){
-  
+function build(pts, offsets, numberOfComponents, connect, nOfCells){
+
   var indices = [];
   var positions = [];
-  
+  var decimal = /(-?\d+\.?\d*)/g
+
   if(numberOfComponents == 3){
-    points = pointsXml.text().split('( )+')
-    cellsArray = connect.text().split('( )+');
+    // x = decimal.match(points)
+    points = pts.match(decimal)
+    cellsArray = connect.match(decimal)
+    // points = pointsXml.text().split(/( )+/)
+    // cellsArray = connect.text().split(/( )+/);
     nPoints = points.length
-    for(i = 0; i < nPoints; i += Number(numberOfComponents)){
-      positions.push( parseInt( points[i] ), parseInt( points[ i+1 ] ), parseInt( points[ i+2 ] ) );
+    for(i = 0; i < nPoints; i += 3){
+      positions.push( parseFloat( points[i] ), parseFloat( points[ i+1 ] ), parseFloat( points[ i+2 ] ) );
     }
     for(var j = 0; j < nOfCells; j+=3){
-      indices.push( parseInt( cellsArray[i] ), parseInt( cellsArray[ i+1 ] ), parseInt( cellsArray[ i+2 ] ) );
+      indices.push( parseFloat( cellsArray[i] ), parseFloat( cellsArray[ i+1 ] ), parseFloat( cellsArray[ i+2 ] ) );
     }
   }
-  
-  
+
+
   geometry = new THREE.BufferGeometry();
   geometry.setIndex( new THREE.BufferAttribute( new ( indices.length > 65535 ? Uint32Array : Uint16Array )( indices ), 1 ) );
   geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array( positions ), 3 ) );
   geometry.computeVertexNormals();
-  
+
   return
-  
+
 }
