@@ -1,43 +1,45 @@
 $(document).ready(function(){
   camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.01, 1e10 );
-camera.position.z = 0.2;
+  camera.position.z = 0.2;
 
-// controls = new THREE.TrackballControls( camera );
-//
-// controls.rotateSpeed = 5.0;
-// controls.zoomSpeed = 5;
-// controls.panSpeed = 2;
-//
-// controls.noZoom = false;
-// controls.noPan = false;
-//
-// controls.staticMoving = true;
-// controls.dynamicDampingFactor = 0.3;
+  // controls = new THREE.TrackballControls( camera );
+  //
+  // controls.rotateSpeed = 5.0;
+  // controls.zoomSpeed = 5;
+  // controls.panSpeed = 2;
+  //
+  // controls.noZoom = false;
+  // controls.noPan = false;
+  //
+  // controls.staticMoving = true;
+  // controls.dynamicDampingFactor = 0.3;
 
-scene = new THREE.Scene();
+  scene = new THREE.Scene();
 
-scene.add( camera );
+  scene.add( camera );
 
-//load data
-loadDoc("Bed000000.vtu")
+  //load data
+  loadDoc("Bed000000.vtu")
 
-// light
+  // light
 
-var dirLight = new THREE.DirectionalLight( 0xffffff );
-dirLight.position.set( 200, 200, 1000 ).normalize();
+  var dirLight = new THREE.DirectionalLight( 0xffffff );
+  dirLight.position.set( 200, 200, 1000 ).normalize();
 
-camera.add( dirLight );
-camera.add( dirLight.target );
-// renderer
+  camera.add( dirLight );
+  camera.add( dirLight.target );
+  // renderer
 
-renderer = new THREE.WebGLRenderer( { antialias: false } );
-renderer.setPixelRatio( window.devicePixelRatio );
-renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer = new THREE.WebGLRenderer( { antialias: false } );
+  renderer.setPixelRatio( window.devicePixelRatio );
+  // renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.setSize( 800, 500);
 
-container = document.createElement( 'div' );
-  document.body.appendChild( container );
+  container = document.createElement( 'div' );
+  // document.body.appendChild( container );
+  $("#container").append(container)
   container.appendChild( renderer.domElement );
-  
+
 })
 function loadDoc(url) {
   var xhttp = new XMLHttpRequest();
@@ -68,13 +70,14 @@ function parse(x){
 function build(pointsXml, offsets, numberOfComponents){
   // nPts = pointsXml.split(" ")
   if(numberOfComponents == 3){
-  points = pointsXml.text().split(' ')
-  nPoints = points.length
-  for(i = 0; i < nPoints; i += Number(numberOfComponents)){
-    x = points[i]
-    y = points[i+1]
-    z = points[i+2]
-  }
+    points = pointsXml.text().split(' ')
+    nPoints = points.length
+    for(i = 0; i < nPoints; i += Number(numberOfComponents)){
+      x = points[i]
+      y = points[i+1]
+      z = points[i+2]
+      
+    }
   }
 
 }
