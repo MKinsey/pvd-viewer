@@ -47,12 +47,15 @@ THREE.VTKNewLoader.prototype = {
         var offsets = xml.find('[Name="offsets"]')
         var types = xml.find('[Name="types"]')
         var pData = xml.find('PointData')
-		
-		
+
+
 		var indices = [];
         var positions = [];
         var decimal = /(-?\d+\.?\d*)/g
-      
+        var scalar = /(-?\d+\.?\d*[eE+]?[+-]\d*)/g
+				//test
+				scalars = pData.text().match(scalar)
+
         if(numberOfComponents == 3){
             points = pts.text().match(decimal)
             cellsArray = connectivity.text().match(decimal)
@@ -73,13 +76,13 @@ THREE.VTKNewLoader.prototype = {
                 indices.push( parseFloat( cellsArray[j] ), parseFloat( cellsArray[ j+1 ] ), parseFloat( cellsArray[ j+2 ] ) );
             }
         }
-      
-      
+
+
         var geometry = new THREE.BufferGeometry();
         geometry.setIndex( new THREE.BufferAttribute( new ( indices.length > 65535 ? Uint32Array : Uint16Array )( indices ), 1 ) );
         geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array( positions ), 3 ) );
-        
-      
+
+
         return geometry
 
 	}
