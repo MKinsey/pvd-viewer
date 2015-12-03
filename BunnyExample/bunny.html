@@ -27,15 +27,17 @@
 	</head>
 
 	<body>
-		<div id="info">
+		<!--div id="info">
 		<a href="http://threejs.org" target="_blank">three.js</a> -
 		vtk format loader test -
 		model from <a href="http://www.cc.gatech.edu/projects/large_models/" target="_blank">The GeorgiaTech Lagre Geometric Model Archive</a>,
-		</div>
+		</div-->
+		<div id="info"></div>
 
 		<script src="js/three.min.js"></script>
 
 		<script src="js/TrackballControls.js"></script>
+		<script src="js/OrbitControls.js"></script>
 		<script src="js/jquery.js"></script>
 		<script src="js/VTKNewLoader.js"></script>
 
@@ -48,7 +50,7 @@
 
 			var container, stats;
 
-			var camera, controls, scene, renderer;
+			var camera, controls, scene, renderer, gridgroup;
 
 			var cross;
 
@@ -56,37 +58,39 @@
 			animate();
 
 			function init() {
-
+			
 				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.01, 1e10 );
-				camera.position.z = 0.2;
-				camera.position.y = -2601788.035;
-				camera.position.x = 188709.447106;
+				camera.position.z = -1000;
+				camera.position.y = -3000000.035;
+				camera.position.x = 130000.447106;
+				
+				// renderer
 
-				controls = new THREE.TrackballControls( camera );
+				renderer = new THREE.WebGLRenderer( { antialias: false } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
 
-				controls.rotateSpeed = 5.0;
-				controls.zoomSpeed = 5;
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+				container.appendChild( renderer.domElement );
+
+				//controls = new THREE.TrackballControls( camera );
+
+				controls = new THREE.OrbitControls( camera, renderer.domElement );
+				//controls.addEventListener( 'change', render ); // add this only if there is no animation loop (requestAnimationFrame)
+				controls.enableDamping = true;
+				controls.dampingFactor = 0.25;
+				controls.enableZoom = true;
+				controls.rotateSpeed = 1.0;
+				controls.zoomSpeed = 0.2;
 				controls.panSpeed = 2;
-
-				controls.noZoom = false;
-				controls.noPan = false;
-
-				controls.staticMoving = true;
-				controls.dynamicDampingFactor = 0.3;
+				controls.enablePan = true;
 
 				scene = new THREE.Scene();
 
 				scene.add( camera );
 
-				// light
-
-				var dirLight = new THREE.DirectionalLight( 0xffffff );
-				dirLight.position.set( 200, 200, 1000 ).normalize();
-
-				camera.add( dirLight );
-				camera.add( dirLight.target );
-
-				var material = new THREE.MeshLambertMaterial( { color:0xffffff, side: THREE.DoubleSide } );
+				var material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
 
 				var loader = new THREE.VTKNewLoader();
 				loader.load( "Bed000000.vtu", function ( geometry ) {
@@ -101,21 +105,22 @@
 					scene.add( mesh );
 
 				} );
+				
+				var geometry = new THREE.BoxGeometry( 1, 1, 1 );
+				var material2 = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
+				var cube = new THREE.Mesh( geometry, material2 );
+				scene.add( cube );
+				
+				gridgroup = new THREE.Group();
+				plotAxis(1e10);
+				scene.add( gridgroup );
 
-				// renderer
+				
 
-				renderer = new THREE.WebGLRenderer( { antialias: false } );
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-
-				container = document.createElement( 'div' );
-				document.body.appendChild( container );
-				container.appendChild( renderer.domElement );
-
-				stats = new Stats();
-				stats.domElement.style.position = 'absolute';
-				stats.domElement.style.top = '0px';
-				container.appendChild( stats.domElement );
+//				stats = new Stats();
+//				stats.domElement.style.position = 'absolute';
+//				stats.domElement.style.top = '0px';
+//				container.appendChild( stats.domElement );
 
 				//
 
@@ -139,10 +144,48 @@
 				requestAnimationFrame( animate );
 
 				controls.update();
+				document.getElementById("info").innerHTML = "x:" + camera.position.x + ", y:" + camera.position.y + ", z:" + camera.position.z;
 				renderer.render( scene, camera );
 
-				stats.update();
+//				stats.update();
 
+			}
+			
+			function plotAxis(length) {
+				// plots colored bars length units long for the x, y, and z axis
+			
+				var xMaterial = new THREE.LineBasicMaterial({color: 0xff0000});
+				var yMaterial = new THREE.LineBasicMaterial({color: 0x0000ff});
+				var zMaterial = new THREE.LineBasicMaterial({color: 0x2FA600});
+			
+				var offset = 0.04;
+			
+				// draw x axis
+				var geometry = new THREE.Geometry();
+				geometry.vertices.push(
+					new THREE.Vector3(-length, offset, 0),
+					new THREE.Vector3(length, offset, 0)
+				);
+			
+				gridgroup.add(new THREE.Line(geometry, xMaterial));
+			
+				// draw y axis
+				var geometry = new THREE.Geometry();
+				geometry.vertices.push(
+					new THREE.Vector3(0, -length, 0),
+					new THREE.Vector3(0, length, 0)
+				);
+			
+				gridgroup.add(new THREE.Line(geometry, yMaterial));
+			
+				// draw z axis
+				var geometry = new THREE.Geometry();
+				geometry.vertices.push(
+					new THREE.Vector3(0, offset, -length),
+					new THREE.Vector3(0, offset, length)
+				);
+			
+				gridgroup.add(new THREE.Line(geometry, zMaterial));
 			}
 
 		</script>

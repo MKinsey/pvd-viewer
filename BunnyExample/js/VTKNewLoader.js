@@ -57,8 +57,17 @@ THREE.VTKNewLoader.prototype = {
             points = pts.text().match(decimal)
             cellsArray = connectivity.text().match(decimal)
             nPoints = points.length
+            var minX = parseFloat(points[2]), minY = parseFloat(points[1]), maxX = parseFloat(points[2]), maxY = parseFloat(points[1]);
+            for(i = 3; i < nPoints; i += 3){
+                if(parseFloat(points[i+2]) < minX ) minX = parseFloat(points[i+2]);
+                else if(parseFloat(points[i+2]) > maxX ) maxX = parseFloat(points[i+2]);
+                if(parseFloat(points[i+1]) < minY ) minY = parseFloat(points[i+1]);
+                else if(parseFloat(points[i+1]) > maxY ) maxY = parseFloat(points[i+1]);
+            }
+            var averageX = (parseFloat(maxX) + parseFloat (minX))/2;
+            var averageY = (parseFloat(maxY) + parseFloat (minY))/2;
             for(i = 0; i < nPoints; i += 3){
-                positions.push( parseFloat( points[i] ), parseFloat( points[ i+1 ] ), parseFloat( points[ i+2 ] ) );
+                positions.push( parseFloat( points[i+2] ) - parseFloat(averageX), parseFloat( points[ i+1 ] ) - parseFloat(averageY), parseFloat( points[ i ] )  );
             }
             for(var j = 0; j < numberOfCells; j+=3){
                 indices.push( parseFloat( cellsArray[j] ), parseFloat( cellsArray[ j+1 ] ), parseFloat( cellsArray[ j+2 ] ) );
