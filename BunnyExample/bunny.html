@@ -36,8 +36,8 @@
 		<script src="js/three.min.js"></script>
 
 		<script src="js/TrackballControls.js"></script>
-
-		<script src="js/VTKLoader.js"></script>
+		<script src="js/jquery.js"></script>
+		<script src="js/VTKNewLoader.js"></script>
 
 		<script src="js/Detector.js"></script>
 		<script src="js/stats.min.js"></script>
@@ -59,6 +59,8 @@
 
 				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.01, 1e10 );
 				camera.position.z = 0.2;
+				camera.position.y = -2601788.035;
+				camera.position.x = 188709.447106;
 
 				controls = new THREE.TrackballControls( camera );
 
@@ -86,13 +88,16 @@
 
 				var material = new THREE.MeshLambertMaterial( { color:0xffffff, side: THREE.DoubleSide } );
 
-				var loader = new THREE.VTKLoader();
-				loader.load( "cube.vtk", function ( geometry ) {
+				var loader = new THREE.VTKNewLoader();
+				loader.load( "Bed000000.vtu", function ( geometry ) {
 
 					geometry.computeVertexNormals();
 
 					var mesh = new THREE.Mesh( geometry, material );
-					mesh.position.setY( - 0.09 );
+					mesh.position.setY( 0 );
+					mesh.position.setX( 0 );
+					mesh.position.setZ( 0 );
+					//mesh.position.setY( -0.09 );
 					scene.add( mesh );
 
 				} );
