@@ -36,8 +36,10 @@ THREE.VTKNewLoader.prototype = {
 
 	parse: function ( data ) {
 
+        //Parsing the data from the .vtu file
 		var xmlDoc = $.parseXML( data )
         var xml = $( xmlDoc )
+        
         // get specific data
         var pts = xml.find('Points')
         var numberOfComponents = pts.find('DataArray').attr('NumberOfComponents')
@@ -48,18 +50,23 @@ THREE.VTKNewLoader.prototype = {
         var types = xml.find('[Name="types"]')
         var pData = xml.find('PointData')
 
-
-		var indices = [];
-        var positions = [];
+		var indices = []; //Will contain the indexes of the points of each cell
+        var positions = []; //Will contain the coordinates of each point
+        
+        //Regular expressions for formating the data
         var decimal = /(-?\d+\.?\d*)/g
         var scalar = /(-?\d+\.?\d*[eE+]?[+-]\d*)/g
-				//test
-				scalars = pData.text().match(scalar)
+        //test
+        var scalars = pData.text().match(scalar)
 
+        
         if(numberOfComponents == 3){
             points = pts.text().match(decimal)
             cellsArray = connectivity.text().match(decimal)
             nPoints = points.length
+            var geometry = new THREE.BufferGeometry();
+            
+            //Minimum and maximum of X and Y is stored to center the surface. Z is always 0, so there is no need of center it.
             var minX = parseFloat(points[2]), minY = parseFloat(points[1]), maxX = parseFloat(points[2]), maxY = parseFloat(points[1]);
             for(i = 3; i < nPoints; i += 3){
                 if(parseFloat(points[i+2]) < minX ) minX = parseFloat(points[i+2]);
@@ -69,21 +76,35 @@ THREE.VTKNewLoader.prototype = {
             }
             var averageX = (parseFloat(maxX) + parseFloat (minX))/2;
             var averageY = (parseFloat(maxY) + parseFloat (minY))/2;
+            
+            //Minimum and maximum temperature (scalars)
+            var minT = parseFloat(scalars[0]), maxT = parseFloat(scalars[0]);
+            for(i = 1; i < nPoints; i += 1){
+                if (minT > parseFloat(scalars[i])) minT = parseFloat(scalars[i]);
+                if (maxT < parseFloat(scalars[i])) maxT = parseFloat(scalars[i]);    
+            }
+            
+            colorFunction = chroma.scale(["blue","yellow","red"]);
+            vertexColors = [];
             for(i = 0; i < nPoints; i += 3){
+                //We substrat the average from the X and the Y coordinates to center the figure
                 positions.push( parseFloat( points[i+2] ) - parseFloat(averageX), parseFloat( points[ i+1 ] ) - parseFloat(averageY), parseFloat( points[ i ] )  );
+                var newColor = new THREE.Color(colorFunction( ( parseFloat( scalars[i/3] ) - minT ) / ( maxT - minT ) ).hex() );
+                vertexColors.push( newColor.r );
+                vertexColors.push( newColor.g );
+                vertexColors.push( newColor.b );
             }
             for(var j = 0; j < numberOfCells; j+=3){
+                //Index of the points of each cell/triangle
                 indices.push( parseFloat( cellsArray[j] ), parseFloat( cellsArray[ j+1 ] ), parseFloat( cellsArray[ j+2 ] ) );
             }
         }
 
-
-        var geometry = new THREE.BufferGeometry();
         geometry.setIndex( new THREE.BufferAttribute( new ( indices.length > 65535 ? Uint32Array : Uint16Array )( indices ), 1 ) );
         geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array( positions ), 3 ) );
+        geometry.addAttribute( 'color', new THREE.BufferAttribute( new Float32Array( vertexColors ), 3 ) );
 
-
-        return geometry
+        return geometry;
 
 	}
 

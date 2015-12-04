@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>three.js webgl - loaders - vtk loader</title>
+		<title>webgl vtu loader - three.js</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
@@ -39,6 +39,7 @@
 		<script src="js/TrackballControls.js"></script>
 		<script src="js/OrbitControls.js"></script>
 		<script src="js/jquery.js"></script>
+		<script src="js/chroma.min.js"></script>
 		<script src="js/VTKNewLoader.js"></script>
 
 		<script src="js/Detector.js"></script>
@@ -90,18 +91,18 @@
 
 				scene.add( camera );
 
-				var material = new THREE.MeshBasicMaterial( { color: 0xffffff } );
+				
 
 				var loader = new THREE.VTKNewLoader();
 				loader.load( "Bed000000.vtu", function ( geometry ) {
 
 					geometry.computeVertexNormals();
-
+					var material = new THREE.MeshBasicMaterial( { vertexColors: THREE.VertexColors } );
 					var mesh = new THREE.Mesh( geometry, material );
-					mesh.position.setY( 0 );
 					mesh.position.setX( 0 );
+					mesh.position.setY( 0 );
 					mesh.position.setZ( 0 );
-					//mesh.position.setY( -0.09 );
+					
 					scene.add( mesh );
 
 				} );
