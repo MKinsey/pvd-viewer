@@ -84,15 +84,16 @@ THREE.VTKNewLoader.prototype = {
                 if (maxT < parseFloat(scalars[i])) maxT = parseFloat(scalars[i]);    
             }
             
-            colorFunction = chroma.scale(["blue","yellow","red"]);
-            vertexColors = [];
+            colorFunction = chroma.scale(["blue","yellow","red"]);//scalar color function 
+            vertexColors = [];  //array of vertex colors
+            
             for(i = 0; i < nPoints; i += 3){
                 //We substrat the average from the X and the Y coordinates to center the figure
                 positions.push( parseFloat( points[i+2] ) - parseFloat(averageX), parseFloat( points[ i+1 ] ) - parseFloat(averageY), parseFloat( points[ i ] )  );
-                var newColor = new THREE.Color(colorFunction( ( parseFloat( scalars[i/3] ) - minT ) / ( maxT - minT ) ).hex() );
-                vertexColors.push( newColor.r );
-                vertexColors.push( newColor.g );
-                vertexColors.push( newColor.b );
+                var newColor = new THREE.Color(colorFunction( ( parseFloat( scalars[i/3] ) - minT ) / ( maxT - minT ) ).hex() ); //get the color of the point
+                vertexColors.push( newColor.r ); //add to the vertex the red value
+                vertexColors.push( newColor.g ); //add to the vertex the green value
+                vertexColors.push( newColor.b ); //add to the vertex the blue value
             }
             for(var j = 0; j < numberOfCells; j+=3){
                 //Index of the points of each cell/triangle
@@ -100,9 +101,9 @@ THREE.VTKNewLoader.prototype = {
             }
         }
 
-        geometry.setIndex( new THREE.BufferAttribute( new ( indices.length > 65535 ? Uint32Array : Uint16Array )( indices ), 1 ) );
-        geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array( positions ), 3 ) );
-        geometry.addAttribute( 'color', new THREE.BufferAttribute( new Float32Array( vertexColors ), 3 ) );
+        geometry.setIndex( new THREE.BufferAttribute( new ( indices.length > 65535 ? Uint32Array : Uint16Array )( indices ), 1 ) ); //added the cells, 3 index per point 
+        geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array( positions ), 3 ) ); //added points, 3 coordinates per point
+        geometry.addAttribute( 'color', new THREE.BufferAttribute( new Float32Array( vertexColors ), 3 ) ); //add color, (r,g,b) per vertex
 
         return geometry;
 
