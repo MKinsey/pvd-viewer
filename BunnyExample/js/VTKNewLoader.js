@@ -84,7 +84,7 @@ THREE.VTKNewLoader.prototype = {
                 if (maxT < parseFloat(scalars[i])) maxT = parseFloat(scalars[i]);    
             }
             
-            colorFunction = chroma.scale(["blue","yellow","red"]);//scalar color function 
+            colorFunction = chroma.scale(["blue","yellow","red"]).domain([0,0.65,1]); //scalar color function 
             vertexColors = [];  //array of vertex colors
             
             for(i = 0; i < nPoints; i += 3){
