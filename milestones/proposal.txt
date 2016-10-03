@@ -1,9 +1,0 @@
-﻿Michael Kinsey
-CSCI 491
-Michael Cassens
-
-Project Proposal
-
-	Professor Jesse Johnson's research focuses on modeling the physics of glaciers and how they respond to temperature change. This involves year round data collection of the Greenland Ice Sheet on a massive scale. My proposed project centers around taking in datasets from the experiment and rendering them in three dimensions from a web browser. A good metric of performance will be to compare the same datasets in ParaView, the modeling program used by the research team.
-	The incoming data is in an XML based format called ParaView Data (or pvd). Because of the massive scale of the data, it is processed in chunks and stored in many smaller files that use the vtu format. The pvd 'master' file contains metadata as well as pointers to each of the smaller 'pieces' that can then be assembled into the full dataset. The most obvious challenge will be optimizing this simulation, so that it can take place within the web browser and be used with commodity grade hardware. Possible avenues for optimization are smoothing techniques and variable resolution. Currently a greyscale heat map is the objective, but a full color heat map could be implemented for additional complexity. 
-	I hope to accomplish this by using one of the three dimensional JavaScript libraries currently available. The next step in the project will be researching and selecting a library that I think will best suit the project's needs. From this project, I hope to get a few things. First, I think it is a great real-world application of skills learned in this course. Second, I think it will be a good project to use for a resume or portfolio as something that I have worked on independently. Finally, it will be good experience with problem solving and large data sets, which often yield interesting and unique solutions. 
